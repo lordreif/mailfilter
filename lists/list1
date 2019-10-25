@@ -1,0 +1,8 @@
+\s(work@mydomain\.com)
+\s(food@mydomain\.com)
+\s(personal@mydomain\.com)
+\s(hostmaster@mydomain\.com)
+\s(postmaster@mydomain\.com)
+\s(webmaster@mydomain\.com)
+\s(info@mydomain\.com)
+\s(post@mydomain\.com)

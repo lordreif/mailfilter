@@ -1,0 +1,77 @@
+# The location of the mailfilter directory
+MAILFILTERDIR="$HOME/.mailfilter"
+
+# Redundancy check
+`reformail -D 8000 duplicate.cache`
+if ( $RETURNCODE == 0 )
+{
+    exit
+}
+
+# Mail directories
+MAILDIR="$HOME/Maildir"
+SUBDIR1="$MAILDIR/.Subdir1"
+SUBDIR2="$MAILDIR/.Subdir2"
+CATCHALLDIR="$MAILDIR/.Catchall"
+
+# Pattern lists
+LIST1="$MAILFILTERDIR/lists/list1"
+LIST2="$MAILFILTERDIR/lists/list2"
+
+# Fetch all relevant recipients
+ADDRLIST=""
+foreach /^(To|Cc|Bcc): .*/:h
+{
+    TO="$MATCH"
+
+    foreach ( getaddr $TO ) =~ /.+@mydomain\.com/
+    {
+        ADDRLIST="$ADDRLIST $MATCH"
+    }
+
+    foreach ( getaddr $TO ) =~ /.+@myseconddomain\.org/
+    {
+        ADDRLIST="$ADDRLIST $MATCH"
+    }
+}
+
+# Apply filtering rules for each recipient
+foreach ( "$ADDRLIST" ) =~ /\s[^@]+@[^\s]+/
+{
+    TO="$MATCH"
+    MATCHED=0
+
+    # Mails to hello@mydomain.com to inbox
+    if( $TO =~ /\s(hello@mydomain\.com)/ )
+    {
+        cc "$MAILDIR"
+        MATCHED=1
+    }
+
+    # Mails in list1 to first mail subdirectory
+    if( lookup($TO, "$LIST1") )
+    {
+        `test -d "$SUBDIR1/" || maildirmake "$SUBDIR1/"`
+        cc "$SUBDIR1"
+        MATCHED=1
+    }
+
+    # Mails in list2 to second mail subdirectory
+    if( lookup($TO, "$LIST2") )
+    {
+        `test -d "$SUBDIR2/" || maildirmake "$SUBDIR2/"`
+        cc "$SUBDIR2"
+        MATCHED=1
+    }
+
+
+    # Mails not matched to chatch-all mail directory
+    if( ! $MATCHED )
+    {
+        `test -d "$CATCHALLDIR/" || maildirmake "$CATCHALLDIR/"`
+        cc "$CATCHALLDIR"
+    }
+}
+
+# End filtering
+exit
