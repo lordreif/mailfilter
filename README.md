@@ -15,7 +15,7 @@ SUBDIR2="$MAILDIR/.your-second-mail-subdirectory"
 ```
 
 If a mail subdirectory does not exist yet, it is created by the line
-`\`test -d "$SUBDIR1/" || maildirmake "$SUBDIR1/"\``.
+`test -d "$SUBDIR1/" || maildirmake "$SUBDIR1/"`.
 Attention: normally your mail client does not subscribe to new mail folders
 automatically.
 
