@@ -10,6 +10,7 @@ if ( $RETURNCODE == 0 )
 
 # Mail directories
 MAILDIR="$HOME/Maildir"
+BCCDIR="$MAILDIR/.BCC"
 SUBDIR1="$MAILDIR/.Subdir1"
 SUBDIR2="$MAILDIR/.Subdir2"
 CATCHALLDIR="$MAILDIR/.Catchall"
@@ -35,7 +36,7 @@ foreach /^(To|Cc|Bcc): .*/:h
     }
 }
 
-# Apply filtering rules for each recipient
+# Apply filtering rules for each recipient in the header
 foreach ( "$ADDRLIST" ) =~ /\s[^@]+@[^\s]+/
 {
     TO="$MATCH"
@@ -64,13 +65,19 @@ foreach ( "$ADDRLIST" ) =~ /\s[^@]+@[^\s]+/
         MATCHED=1
     }
 
-
     # Mails not matched to chatch-all mail directory
     if( ! $MATCHED )
     {
         `test -d "$CATCHALLDIR/" || maildirmake "$CATCHALLDIR/"`
         cc "$CATCHALLDIR"
     }
+}
+
+# Catch BCC mails
+if ( $ADDRLIST eq  "" )
+{
+	`test -d "$BCCDIR/" || maildirmake "$BCCDIR/"`
+	cc "$BCCDIR"
 }
 
 # End filtering
