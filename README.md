@@ -5,7 +5,7 @@ sorts incoming mails according to their recipients (*To*, *CC* and *BCC*).
 
 ## Usage:
 Store the script and filtering lists in a directory
-(mine is `$/HOME/.mailfilter`) and update
+(mine is `$HOME/.mailfilter`) and update
 ```
 MAILFILTERDIR="the path to this directory"
 MAILDIR="the path of your mail directory"
@@ -21,7 +21,7 @@ automatically.
 
 For each mail subdirectory there is a pattern list in `/lists` defining the
 rules for sorting mails into. Make sure that every pattern starts with `\s`
-since the recipients stored in `ADDRLIST` are separated by a space.
+since the recipients stored in `ADDRLIST` are separated by spaces.
 
 Finally update the domains you want to take account of in the
 *# Fetch all relevant recipients* part.
